@@ -77,6 +77,8 @@ extend(Backbone.LocalStorage.prototype, {
 
   // Save the current state of the **Store** to *localStorage*.
   save: function() {
+    var store = this.localStorage().getItem(this.name);
+    this.records = _.union(this.records, store && store.split(","));
     this.localStorage().setItem(this.name, this.records.join(","));
   },
 
@@ -106,11 +108,15 @@ extend(Backbone.LocalStorage.prototype, {
 
   // Retrieve a model from `this.data` by id.
   find: function(model) {
+    var store = this.localStorage().getItem(this.name);
+    this.records = (store && store.split(",")) || [];
     return this.serializer.deserialize(this.localStorage().getItem(this._itemName(model.id)));
   },
 
   // Return the array of all models currently in storage.
   findAll: function() {
+    var store = this.localStorage().getItem(this.name);
+    this.records = (store && store.split(",")) || [];
     var result = [];
     for (var i = 0, id, data; i < this.records.length; i++) {
       id = this.records[i];
